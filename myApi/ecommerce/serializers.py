@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Product, Category, Brand, Order
+from .models import Product, Category, Brand, Order,Review
 class ProductSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
     class Meta:
@@ -20,4 +20,12 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['id', 'product', 'quantity', 'order_date']
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Review
+        fields=['id', 'name', 'description','date']
+
+
 

@@ -11,7 +11,7 @@ class Product(models.Model):
     Brand = models.ForeignKey('Brand', on_delete=models.CASCADE)
     def __str__(self):
         return self.name
-    
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -25,7 +25,7 @@ class Brand(models.Model):
 
     def __str__(self):
         return self.name
-    
+
 
 class Order(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -34,6 +34,18 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order of {self.quantity} x {self.product.name}"
-    
 
-    
+
+
+class Review(models.Model):
+        product = models.ForeignKey(Product, on_delete=models.CASCADE,related_name="reviews")
+        name = models.CharField(max_length=255)
+        description = models.TextField()
+        date=models.DateField(auto_now_add=True)
+
+        def __str__(self):
+          return f"Order of {self.quantity} x {self.product.name}"
+
+
+
+
