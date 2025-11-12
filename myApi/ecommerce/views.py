@@ -3,115 +3,76 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 from django_filters.rest_framework import DjangoFilterBackend
-
+from rest_framework import viewsets
 from .models import Product,Review
 from .serializers import ProductSerializer,ReviewSerializer
-# Create your views here.
-
-# @api_view(['GET','POST'])
-# def product_list(request):
-#     if request.method == 'GET':
-#         queryset = Product.objects.all()
-#         allproduct = ProductSerializer(queryset, many=True).data
-#         return Response(allproduct, status=status.HTTP_200_OK)
-#     elif request.method == 'POST':
-#         serializer = ProductSerializer(data=request.data)
-#         print('data = ',serializer)
-#         serializer.is_valid(raise_exception=True)
-#         product =serializer.save()
-#         return Response(serializer.data, status=status.HTTP_201_CREATED)
-# @api_view(['GET','PUT','DELETE'])
-# def product_detail(request, id):
-#     product = get_object_or_404(Product, pk=id)
-#     if request.method == 'GET':
-#         serializer = ProductSerializer(product)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
-#     elif request.method == 'PUT':
-#         serializer = ProductSerializer(product, data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         serializer.save()
-#         return Response(serializer.data, status=status.HTTP_200_OK)
-#     elif request.method == 'DELETE':
-#         product.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+import cProfile
+from django.http import JsonResponse
+from .models import Product
+from .serializers import ProductSerializer
 
-# advanced => class based views ,viewsets ,routers
+def profiled_product_list(request):
+    profiler = cProfile.Profile()
+    profiler.enable()
 
-# first using calss based views
-# from rest_framework.views import APIView
-
-# class ProductsList(APIView):
-#     def get(self,request):
-#         queryset = Product.objects.all()
-#         allproduct = ProductSerializer(queryset, many=True).data
-#         return Response(allproduct, status=status.HTTP_200_OK)
-#     def post(self,request):
-#         serializer = ProductSerializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         serializer.save()
-#         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-# class ProductDetail(APIView):
-
-#     def get_object(self,id):
-#         product = get_object_or_404(Product, pk=id)
-#         return product
-
-#     def get(self,request,id):
-#         product = self.get_object(id)
-#         serializer = ProductSerializer(product)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
-
-#     def put(self,request,id):
-#         product = self.get_object(id)
-#         serializer = ProductSerializer(product, data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         serializer.save()
-#         return Response(serializer.data, status=status.HTTP_200_OK)
-
-#     def delete(self,request,id):
-#         product = self.get_object(id)
-#         product.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-
-#second using generic views and mixins
-# from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-
-# class ProductsList(ListCreateAPIView):
-#     queryset = Product.objects.all()
-#     serializer_class = ProductSerializer
-
-# class ProductDetail(RetrieveUpdateDestroyAPIView):
-#     queryset = Product.objects.all()
-#     serializer_class = ProductSerializer
-#     lookup_field = 'id'  # matches <int:id> in URL
-
-
-# third using viewsets and routers
-
-from rest_framework import viewsets
-class ProductViewSet(viewsets.ModelViewSet):
-    # queryset = Product.objects.all()
     queryset = Product.objects.all()
+    data = ProductSerializer(queryset, many=True).data
+
+    profiler.disable()
+    profiler.print_stats(sort='time')
+
+    return JsonResponse(data, safe=False)
+
+
+
+
+# class ProductViewSet(viewsets.ModelViewSet):
+
+#     queryset = Product.objects.all()
+#     serializer_class = ProductSerializer
+#     filter_backends = [DjangoFilterBackend]
+#     filterset_fields = ['Category_id', 'Brand_id']
+
+#     def list(self, request, *args, **kwargs):
+#         queryset = self.get_queryset()
+#         results = []
+#         for product in queryset:
+#             results.append({
+#                 "id": product.id,
+#                 "name": product.name,
+#                 "category": product.Category.name,
+#                 "brand": product.Brand.name,
+#                 "price": product.price,
+#             })
+#         return Response(results)
+
+
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.select_related('Category', 'Brand').all()
     serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['Category_id', 'Brand_id']
 
-    # def get_queryset(self):
-    #     queryset = Product.objects.all()
-    #     category = self.request.query_params.get('Category_id')
-    #     brand = self.request.query_params.get('Brand_id')
 
-    #     if category:
-    #         queryset = queryset.filter(Category_id=category)
-    #     if brand:
-    #         queryset = queryset.filter(Brand_id=brand)
-    #     return queryset
+
+''' Conclusion
+From the Silk profiling results, the http://127.0.0.1:8000/api/products/?Category_id=5 endpoint shows a clear difference in performance between two runs.
+
+The unoptimized version executed 28 SQL queries, taking 559 ms overall, with more time spent on individual queries.
+
+After optimization, the query count dropped to 9 queries, and the total response time decreased to 374 ms.
+'''
+
+
+
+
+
+
+
+
+
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer

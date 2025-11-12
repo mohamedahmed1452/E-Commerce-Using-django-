@@ -41,9 +41,14 @@ INSTALLED_APPS = [
     'rest_framework',
     'students',
     'ecommerce',
+    'debug_toolbar',
+    'movielens',
+    'silk',
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'silk.middleware.SilkyMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -125,4 +130,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
