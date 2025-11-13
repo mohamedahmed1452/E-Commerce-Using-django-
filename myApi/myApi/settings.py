@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'students',
     'ecommerce',
     'debug_toolbar',
     'movielens',
@@ -130,16 +129,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-<<<<<<< HEAD
-REST_FRAMEWORK = {
-    'COERCE_DECIMAL_TO_STRING': False,
-    'PAGE_SIZE': 2,
-}
 
-
-
-=======
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
->>>>>>> d6dc4a54a17e3801ed033b240530d5d58ba3defd
+

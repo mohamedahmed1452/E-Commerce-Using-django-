@@ -47,5 +47,10 @@ class Review(models.Model):
           return f"Order of {self.quantity} x {self.product.name}"
 
 
+class Tag(models.Model):
+    name = models.CharField(max_length=50)
+    products = models.ManyToManyField('Product', related_name='tags')
 
+    def __str__(self):
+        return self.name
 
