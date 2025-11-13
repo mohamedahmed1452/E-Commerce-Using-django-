@@ -3,9 +3,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 from django_filters.rest_framework import DjangoFilterBackend
-
+from rest_framework.filters import SearchFilter, OrderingFilter
 from .models import Product,Review
 from .serializers import ProductSerializer,ReviewSerializer
+from rest_framework.pagination import PageNumberPagination
 # Create your views here.
 
 # @api_view(['GET','POST'])
@@ -99,8 +100,12 @@ class ProductViewSet(viewsets.ModelViewSet):
     # queryset = Product.objects.all()
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['Category_id', 'Brand_id']
+    filter_backends = [DjangoFilterBackend,SearchFilter, OrderingFilter]
+    filterset_fields =['Category_id', 'Brand_id'] 
+    pagination_class = PageNumberPagination
+    search_fields = ['name', 'description']
+    ordering_fields = ['price', 'name']
+   
 
     # def get_queryset(self):
     #     queryset = Product.objects.all()
