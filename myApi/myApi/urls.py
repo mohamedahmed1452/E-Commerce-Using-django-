@@ -21,4 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/',include('students.urls') ),
     path('api/',include('ecommerce.urls') ),
+    path('__debug__/', include('debug_toolbar.urls')),
+     path('silk/', include('silk.urls', namespace='silk')),
 ]

@@ -41,9 +41,14 @@ INSTALLED_APPS = [
     'rest_framework',
     'students',
     'ecommerce',
+    'debug_toolbar',
+    'movielens',
+    'silk',
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'silk.middleware.SilkyMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -125,6 +130,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+<<<<<<< HEAD
 REST_FRAMEWORK = {
     'COERCE_DECIMAL_TO_STRING': False,
     'PAGE_SIZE': 2,
@@ -132,3 +138,8 @@ REST_FRAMEWORK = {
 
 
 
+=======
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
+>>>>>>> d6dc4a54a17e3801ed033b240530d5d58ba3defd
