@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'ecommerce',
     'debug_toolbar',
-    'movielens',
     'silk',
 ]
 
